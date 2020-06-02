@@ -74,8 +74,32 @@ for i in range(len(poleX) - 1, 0, -2):
 k = sp.symbols('k')
 routhTable[0].append(k)
 routhTable[1].append(0)
-
+for i in range(1, len(routhTable) - 1):
+    for j in range(0, len(routhTable[i])):
+        if j == len(routhTable[i]) - 1:
+            routhTable[i + 1].append(0)
+        else:
+            routhTable[i + 1].append(
+                (routhTable[i][j] * routhTable[i - 1][j + 1] - routhTable[i][j + 1] * routhTable[i - 1][j]) /
+                routhTable[i][
+                    j])
+print("Routh Table:")
 print(routhTable)
+kVal = sp.solve(routhTable[len(routhTable) - 2])
+print("Critical Value of K:")
+print(kVal[k])
+auxEqu = routhTable[len(routhTable) - 3][0] * s ** 2 + kVal[k]
+print("Auxiliary Equation:")
+print(auxEqu)
+imaginaryAxisIntercepts = sp.solve(auxEqu, s)
+print("Imaginary Axis Intercepts:")
+print(imaginaryAxisIntercepts)
+for intercept in imaginaryAxisIntercepts:
+    intercept = complex(intercept)
+    plt.plot(0, intercept.imag, 'c.', label='Imaginary Axis Intersection Point')
+
+# calculating angle of departure
+
 plt.grid(True)
 plt.legend(loc="lower center", ncol=3)
 plt.show()
