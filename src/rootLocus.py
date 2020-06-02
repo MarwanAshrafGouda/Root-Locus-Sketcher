@@ -99,6 +99,42 @@ for intercept in imaginaryAxisIntercepts:
     plt.plot(0, intercept.imag, 'c.', label='Imaginary Axis Intersection Point')
 
 # calculating angle of departure
+departureAngles = []
+for i in range(0, len(poleY)):
+    sigmaPhi = 0
+    for j in range(0, len(poleY)):
+        if i != j:
+            phi = complex(poleX[i], poleY[i]) - complex(poleX[j], poleY[j])
+            if phi.real == 0:
+                if phi.imag > 0:
+                    sigmaPhi += math.pi / 2
+                if phi.imag < 0:
+                    sigmaPhi += 3 * math.pi / 2
+            elif phi.imag == 0:
+                if phi.real > 0:
+                    sigmaPhi += 0
+                if phi.real < 0:
+                    sigmaPhi += math.pi
+            else:
+                sigmaPhi += math.atan(phi.imag / phi.real)
+    departureAngle = math.pi - sigmaPhi
+    if departureAngle < 0:
+        departureAngle += 2 * math.pi
+    departureAngles.append(departureAngle)
+print("Departure Angles:")
+print(departureAngles)
+radius = 4
+for i in range(0, len(departureAngles)):
+    angleX = []
+    angleY = []
+    theta = 0
+    while theta < departureAngles[i]:
+        angleX.append(radius * math.cos(theta) + poleX[i])
+        angleY.append(radius * math.sin(theta) + poleY[i])
+        theta += departureAngles[i] / 100
+    plt.plot(angleX, angleY, 'y', label='Angle of Departure', lineWidth=1)
+
+# drawing root locus
 
 plt.grid(True)
 plt.legend(loc="lower center", ncol=3)
