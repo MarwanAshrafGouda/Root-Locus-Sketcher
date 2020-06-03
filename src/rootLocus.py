@@ -3,8 +3,8 @@ import numpy as np
 import math
 import sympy as sp
 
-plt.plot([0, 0], [-80, 80], 'k-', lineWidth=0.6)
-plt.plot([-100, 50], [0, 0], 'k-', lineWidth=0.6)
+plt.plot([0, 0], [-60, 60], 'k-', lineWidth=0.6)
+plt.plot([-90, 20], [0, 0], 'k-', lineWidth=0.6)
 
 # plotting poles
 poleX = [0, -25, -50, -50]
@@ -26,8 +26,8 @@ plt.plot(centroid, 0, 'ro', label='Centroid')
 print("Centroid:")
 print(centroid)
 for angle in angles:
-    endX = 100 * math.cos(angle) + centroid
-    endY = 100 * math.sin(angle)
+    endX = 72 * math.cos(angle) + centroid
+    endY = 72 * math.sin(angle)
     asymX = [centroid, endX]
     asymY = [0, endY]
     plt.plot(asymX, asymY, '--', lineWidth=1, label='Asymptote')
@@ -87,8 +87,9 @@ print("Routh Table:")
 print(routhTable)
 kVal = sp.solve(routhTable[len(routhTable) - 2])
 print("Critical Value of K:")
-print(kVal[k])
-auxEqu = routhTable[len(routhTable) - 3][0] * s ** 2 + kVal[k]
+criticalK = kVal[k]
+print(criticalK)
+auxEqu = routhTable[len(routhTable) - 3][0] * s ** 2 + criticalK
 print("Auxiliary Equation:")
 print(auxEqu)
 imaginaryAxisIntercepts = sp.solve(auxEqu, s)
@@ -123,7 +124,7 @@ for i in range(0, len(poleY)):
     departureAngles.append(departureAngle)
 print("Departure Angles:")
 print(departureAngles)
-radius = 4
+radius = 3
 for i in range(0, len(departureAngles)):
     angleX = []
     angleY = []
@@ -135,6 +136,32 @@ for i in range(0, len(departureAngles)):
     plt.plot(angleX, angleY, 'y', label='Angle of Departure', lineWidth=1)
 
 # drawing root locus
+rootsX = []
+rootsY = []
+print("This will take a while; please wait...")
+flippingPoint = -exp.subs(s, breakAwayPoints[0])
+for k in range(0, 10000000, 2000):
+    roots = sp.solve(exp + k, s, simplify=False, rational=False)
+    rootX = []
+    rootY = []
+    for root in roots:
+        rootX.append(complex(root).real)
+        rootY.append(complex(root).imag)
+    if k > flippingPoint:
+        rootX.append(rootX[0])
+        rootX.append(rootX[1])
+        del rootX[0]
+        del rootX[0]
+        rootY.append(rootY[0])
+        rootY.append(rootY[1])
+        del rootY[0]
+        del rootY[0]
+    rootsX.append(rootX)
+    rootsY.append(rootY)
+for i in range(0, len(rootsX[0])):
+    colX = [row[i] for row in rootsX]
+    colY = [row[i] for row in rootsY]
+    plt.plot(colX, colY, label='Root Locus')
 
 plt.grid(True)
 plt.legend(loc="lower center", ncol=3)
